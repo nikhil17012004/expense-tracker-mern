@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './ExpenseList.css';
 
 const API_URL = 'http://localhost:5000/api/expenses';
 
@@ -13,7 +14,7 @@ function formatDate(value) {
 	});
 }
 
-function ExpenseList() {
+function ExpenseList({ onEdit, refreshKey }) {
 	const [expenses, setExpenses] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -22,6 +23,8 @@ function ExpenseList() {
 		const controller = new AbortController();
 
 		async function loadExpenses() {
+			setIsLoading(true);
+			setError('');
 			try {
 				const response = await fetch(API_URL, { signal: controller.signal });
 				const data = await response.json().catch(() => null);
@@ -49,10 +52,10 @@ function ExpenseList() {
 
 		loadExpenses();
 		return () => controller.abort();
-	}, []);
+	}, [refreshKey]);
 
 	return (
-		<section aria-labelledby="expense-list-title">
+		<section className="expense-list" aria-labelledby="expense-list-title">
 			<h2 id="expense-list-title">Expenses</h2>
 
 			{isLoading && <p role="status">Loading expenses...</p>}
@@ -62,11 +65,16 @@ function ExpenseList() {
 			)}
 
 			{!isLoading && !error && expenses.length > 0 && (
-				<ul>
+				<ul className="expense-list-items">
 					{expenses.map(expense => (
-						<li key={expense._id}>
+						<li className="expense-list-item" key={expense._id}>
 							<article>
-								<h3>{expense.title}</h3>
+								<div className="expense-list-heading">
+									<h3>{expense.title}</h3>
+									<button type="button" onClick={() => onEdit(expense)}>
+										Edit
+									</button>
+								</div>
 								<dl>
 									<div>
 										<dt>Amount</dt>

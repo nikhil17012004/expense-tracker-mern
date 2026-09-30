@@ -149,6 +149,33 @@
 	cursor: wait;
 }
 
+.expense-cancel {
+	width: 100%;
+	min-height: 42px;
+	margin-top: 8px;
+	border: 1px solid #cbd6ce;
+	border-radius: 4px;
+	background: transparent;
+	color: #34463b;
+	font: inherit;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.expense-cancel:hover:not(:disabled) {
+	background: #edf3ee;
+}
+
+.expense-cancel:focus-visible {
+	outline: 3px solid rgb(40 114 84 / 20%);
+	outline-offset: 2px;
+}
+
+.expense-cancel:disabled {
+	opacity: 0.68;
+	cursor: wait;
+}
+
 @media (max-width: 520px) {
 	.expense-form-card {
 		width: calc(100% - 32px);

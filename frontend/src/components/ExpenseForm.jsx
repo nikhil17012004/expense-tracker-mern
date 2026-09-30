@@ -12,6 +12,19 @@ const createEmptyForm = () => ({
 	description: ''
 });
 
+function createFormFromExpense(expense) {
+	if (!expense) return createEmptyForm();
+
+	const date = new Date(expense.date);
+	return {
+		title: expense.title || '',
+		amount: expense.amount == null ? '' : String(expense.amount),
+		category: expense.category || '',
+		date: Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10),
+		description: expense.description || ''
+	};
+}
+
 function validateForm(formData) {
 	const errors = {};
 	const amount = Number(formData.amount);
@@ -32,8 +45,9 @@ function validateForm(formData) {
 	return errors;
 }
 
-function ExpenseForm() {
-	const [formData, setFormData] = useState(createEmptyForm);
+function ExpenseForm({ expenseToEdit = null, onSaved, onCancel }) {
+	const isEditing = Boolean(expenseToEdit?._id);
+	const [formData, setFormData] = useState(() => createFormFromExpense(expenseToEdit));
 	const [errors, setErrors] = useState({});
 	const [apiError, setApiError] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
@@ -63,8 +77,10 @@ function ExpenseForm() {
 
 		setIsSubmitting(true);
 		try {
-			const response = await fetch(API_URL, {
-				method: 'POST',
+			const response = await fetch(
+				isEditing ? `${API_URL}/${encodeURIComponent(expenseToEdit._id)}` : API_URL,
+				{
+				method: isEditing ? 'PUT' : 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					...formData,
@@ -72,7 +88,8 @@ function ExpenseForm() {
 					amount: Number(formData.amount),
 					description: formData.description.trim()
 				})
-			});
+				}
+			);
 			const result = await response.json().catch(() => null);
 
 			if (!response.ok) {
@@ -81,9 +98,10 @@ function ExpenseForm() {
 				);
 			}
 
-			setFormData(createEmptyForm());
+			if (!isEditing) setFormData(createEmptyForm());
 			setErrors({});
-			setSuccessMessage('Expense saved.');
+			setSuccessMessage(isEditing ? 'Expense updated.' : 'Expense saved.');
+			onSaved?.();
 		} catch (error) {
 			setApiError(error.message || 'Unable to reach the server. Please try again.');
 		} finally {
@@ -95,7 +113,7 @@ function ExpenseForm() {
 		<section className="expense-form-card" aria-labelledby="expense-form-title">
 			<header className="expense-form-header">
 				<p className="expense-form-kicker">TRANSACTION</p>
-				<h2 id="expense-form-title">Add expense</h2>
+				<h2 id="expense-form-title">{isEditing ? 'Edit expense' : 'Add expense'}</h2>
 			</header>
 
 			<form className="expense-form" onSubmit={handleSubmit} noValidate>
@@ -181,8 +199,20 @@ function ExpenseForm() {
 				{successMessage && <p className="expense-form-message expense-form-success" role="status">{successMessage}</p>}
 
 				<button className="expense-submit" type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Saving…' : 'Save expense'}
+					{isSubmitting
+						? (isEditing ? 'Updating…' : 'Saving…')
+						: (isEditing ? 'Save changes' : 'Save expense')}
 				</button>
+				{isEditing && (
+					<button
+						className="expense-cancel"
+						type="button"
+						onClick={onCancel}
+						disabled={isSubmitting}
+					>
+						Cancel editing
+					</button>
+				)}
 			</form>
 		</section>
 	);

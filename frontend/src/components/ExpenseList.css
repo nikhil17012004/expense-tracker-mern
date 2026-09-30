@@ -1,0 +1,98 @@
+.expense-list {
+	width: min(100% - 32px, 600px);
+	margin: 24px auto 40px;
+	color: #25342b;
+	text-align: left;
+}
+
+.expense-list > h2 {
+	margin: 0 0 18px;
+	color: #25342b;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 26px;
+}
+
+.expense-list-items {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.expense-list-item {
+	padding: 18px 20px;
+	border: 1px solid #d9e2dc;
+	border-radius: 5px;
+	background: #fff;
+}
+
+.expense-list-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.expense-list-heading h3 {
+	min-width: 0;
+	margin: 0;
+	color: #25342b;
+	font-size: 17px;
+	font-weight: 650;
+	overflow-wrap: anywhere;
+}
+
+.expense-list-heading button {
+	flex: 0 0 auto;
+	min-width: 64px;
+	min-height: 36px;
+	border: 1px solid #287254;
+	border-radius: 4px;
+	background: #fff;
+	color: #205d44;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.expense-list-heading button:hover {
+	background: #edf5ef;
+}
+
+.expense-list-heading button:focus-visible {
+	outline: 3px solid rgb(40 114 84 / 20%);
+	outline-offset: 2px;
+}
+
+.expense-list-item dl {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px 18px;
+	margin: 16px 0 0;
+}
+
+.expense-list-item dl div {
+	min-width: 0;
+}
+
+.expense-list-item dt {
+	color: #78847c;
+	font-size: 11px;
+	font-weight: 650;
+	text-transform: uppercase;
+}
+
+.expense-list-item dd {
+	margin: 3px 0 0;
+	color: #34463b;
+	font-size: 14px;
+	overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+	.expense-list-item dl {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
