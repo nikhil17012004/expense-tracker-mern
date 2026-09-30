@@ -3,10 +3,19 @@ const mongoose = require('mongoose');
 const Expense = require('../models/Expense');
 
 const router = express.Router();
+const validCategories = Expense.schema.path('category').enumValues;
 
 router.get('/', async (req, res) => {
+	const { category } = req.query;
+	if (category !== undefined && !validCategories.includes(category)) {
+		return res.status(400).json({
+			message: `Invalid category. Allowed categories: ${validCategories.join(', ')}`
+		});
+	}
+
 	try {
-		const expenses = await Expense.find().sort({ date: -1 });
+		const filter = category === undefined ? {} : { category };
+		const expenses = await Expense.find(filter).sort({ date: -1 });
 		return res.status(200).json(expenses);
 	} catch (error) {
 		console.error('Error retrieving expenses:', error);

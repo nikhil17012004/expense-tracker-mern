@@ -12,6 +12,39 @@
 	font-size: 26px;
 }
 
+.expense-filter {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.expense-filter label {
+	color: #34463b;
+	font-size: 13px;
+	font-weight: 650;
+}
+
+.expense-filter select {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 40px;
+	padding: 8px 10px;
+	border: 1px solid #cbd6ce;
+	border-radius: 4px;
+	background: #fff;
+	color: #25342b;
+	font: inherit;
+	font-size: 14px;
+}
+
+.expense-filter select:focus-visible {
+	border-color: #287254;
+	outline: 3px solid rgb(40 114 84 / 17%);
+	outline-offset: 1px;
+}
+
 .expense-list-items {
 	display: grid;
 	gap: 12px;

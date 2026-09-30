@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './ExpenseList.css';
 
 const API_URL = 'http://localhost:5000/api/expenses';
+const CATEGORIES = ['Food', 'Travel', 'Shopping', 'Bills', 'Education', 'Other'];
 
 function formatDate(value) {
 	const date = new Date(value);
@@ -20,6 +21,7 @@ function ExpenseList({ onEdit, onDeleted, refreshKey }) {
 	const [error, setError] = useState('');
 	const [deleteError, setDeleteError] = useState('');
 	const [deletingId, setDeletingId] = useState(null);
+	const [selectedCategory, setSelectedCategory] = useState('All');
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -28,7 +30,10 @@ function ExpenseList({ onEdit, onDeleted, refreshKey }) {
 			setIsLoading(true);
 			setError('');
 			try {
-				const response = await fetch(API_URL, { signal: controller.signal });
+				const url = selectedCategory === 'All'
+					? API_URL
+					: `${API_URL}?category=${encodeURIComponent(selectedCategory)}`;
+				const response = await fetch(url, { signal: controller.signal });
 				const data = await response.json().catch(() => null);
 
 				if (!response.ok) {
@@ -54,7 +59,7 @@ function ExpenseList({ onEdit, onDeleted, refreshKey }) {
 
 		loadExpenses();
 		return () => controller.abort();
-	}, [refreshKey]);
+	}, [refreshKey, selectedCategory]);
 
 	async function handleDelete(expense) {
 		setDeleteError('');
@@ -87,12 +92,29 @@ function ExpenseList({ onEdit, onDeleted, refreshKey }) {
 	return (
 		<section className="expense-list" aria-labelledby="expense-list-title">
 			<h2 id="expense-list-title">Expenses</h2>
+			<div className="expense-filter">
+				<label htmlFor="expense-category-filter">Category</label>
+				<select
+					id="expense-category-filter"
+					value={selectedCategory}
+					onChange={event => setSelectedCategory(event.target.value)}
+				>
+					<option value="All">All</option>
+					{CATEGORIES.map(category => (
+						<option key={category} value={category}>{category}</option>
+					))}
+				</select>
+			</div>
 
 			{deleteError && <p className="expense-delete-error" role="alert">{deleteError}</p>}
 			{isLoading && <p role="status">Loading expenses...</p>}
 			{!isLoading && error && <p role="alert">{error}</p>}
 			{!isLoading && !error && expenses.length === 0 && (
-				<p>No expenses yet. Add your first expense to see it here.</p>
+				<p>
+					{selectedCategory === 'All'
+						? 'No expenses yet. Add your first expense to see it here.'
+						: `No ${selectedCategory} expenses found.`}
+				</p>
 			)}
 
 			{!isLoading && !error && expenses.length > 0 && (
