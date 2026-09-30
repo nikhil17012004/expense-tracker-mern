@@ -1,0 +1,166 @@
+.expense-form-card {
+	width: min(100% - 32px, 600px);
+	margin: 40px auto;
+	padding: clamp(20px, 4vw, 32px);
+	border: 1px solid #d9e2dc;
+	border-top: 4px solid #287254;
+	border-radius: 6px;
+	background: linear-gradient(145deg, #fff 0%, #f5f8f5 100%);
+	box-shadow: 0 16px 38px rgb(25 53 37 / 8%);
+	color: #25342b;
+	text-align: left;
+}
+
+.expense-form-header {
+	margin-bottom: 24px;
+}
+
+.expense-form-kicker {
+	margin: 0 0 6px;
+	color: #287254;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+.expense-form-header h2 {
+	margin: 0;
+	color: #25342b;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 30px;
+	font-weight: 600;
+}
+
+.expense-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px 16px;
+}
+
+.expense-field {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.expense-field-wide {
+	grid-column: 1 / -1;
+}
+
+.expense-field label {
+	color: #34463b;
+	font-size: 13px;
+	font-weight: 650;
+}
+
+.expense-field label span {
+	color: #78847c;
+	font-weight: 400;
+}
+
+.expense-field input,
+.expense-field select,
+.expense-field textarea {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 44px;
+	padding: 10px 12px;
+	border: 1px solid #cbd6ce;
+	border-radius: 4px;
+	background: #fff;
+	color: #25342b;
+	font: inherit;
+	font-size: 15px;
+}
+
+.expense-field textarea {
+	min-height: 88px;
+	resize: vertical;
+}
+
+.expense-field input:focus-visible,
+.expense-field select:focus-visible,
+.expense-field textarea:focus-visible {
+	border-color: #287254;
+	outline: 3px solid rgb(40 114 84 / 17%);
+	outline-offset: 1px;
+}
+
+.expense-field [aria-invalid='true'] {
+	border-color: #b33e36;
+}
+
+.expense-field-error {
+	margin: 0;
+	color: #a3332d;
+	font-size: 12px;
+}
+
+.expense-form-message {
+	margin: 18px 0 0;
+	padding: 10px 12px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.expense-form-error {
+	border: 1px solid #e8c5c1;
+	background: #fff5f3;
+	color: #8e2f29;
+}
+
+.expense-form-success {
+	border: 1px solid #c5dfcc;
+	background: #f0f8f1;
+	color: #22633c;
+}
+
+.expense-submit {
+	width: 100%;
+	min-height: 46px;
+	margin-top: 22px;
+	border: 0;
+	border-radius: 4px;
+	background: #287254;
+	color: #fff;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 650;
+	cursor: pointer;
+	transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.expense-submit:hover:not(:disabled) {
+	background: #205d44;
+}
+
+.expense-submit:active:not(:disabled) {
+	transform: translateY(1px);
+}
+
+.expense-submit:focus-visible {
+	outline: 3px solid rgb(40 114 84 / 28%);
+	outline-offset: 2px;
+}
+
+.expense-submit:disabled {
+	opacity: 0.68;
+	cursor: wait;
+}
+
+@media (max-width: 520px) {
+	.expense-form-card {
+		width: calc(100% - 32px);
+		box-sizing: border-box;
+		margin: 24px auto;
+	}
+
+	.expense-form-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.expense-field-wide {
+		grid-column: auto;
+	}
+}
