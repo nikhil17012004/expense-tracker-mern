@@ -11,6 +11,10 @@ function App() {
     setRefreshKey(current => current + 1)
   }
 
+  function handleDeleted(deletedId) {
+    setEditingExpense(current => current?._id === deletedId ? null : current)
+  }
+
   return (
     <>
       <ExpenseForm
@@ -19,7 +23,11 @@ function App() {
         onSaved={handleSaved}
         onCancel={() => setEditingExpense(null)}
       />
-      <ExpenseList onEdit={setEditingExpense} refreshKey={refreshKey} />
+      <ExpenseList
+        onEdit={setEditingExpense}
+        onDeleted={handleDeleted}
+        refreshKey={refreshKey}
+      />
     </>
   )
 }

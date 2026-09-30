@@ -14,10 +14,12 @@ function formatDate(value) {
 	});
 }
 
-function ExpenseList({ onEdit, refreshKey }) {
+function ExpenseList({ onEdit, onDeleted, refreshKey }) {
 	const [expenses, setExpenses] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState('');
+	const [deleteError, setDeleteError] = useState('');
+	const [deletingId, setDeletingId] = useState(null);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -54,10 +56,39 @@ function ExpenseList({ onEdit, refreshKey }) {
 		return () => controller.abort();
 	}, [refreshKey]);
 
+	async function handleDelete(expense) {
+		setDeleteError('');
+		if (!window.confirm(`Delete "${expense.title}"? This cannot be undone.`)) return;
+
+		setDeletingId(expense._id);
+		try {
+			const response = await fetch(`${API_URL}/${encodeURIComponent(expense._id)}`, {
+				method: 'DELETE'
+			});
+			const result = await response.json().catch(() => null);
+
+			if (!response.ok) {
+				throw new Error(result?.message || 'Could not delete expense.');
+			}
+
+			setExpenses(current => current.filter(item => item._id !== expense._id));
+			onDeleted?.(expense._id);
+		} catch (requestError) {
+			setDeleteError(
+				requestError.name === 'TypeError'
+					? 'Could not connect to the server. Check that it is running and try again.'
+					: requestError.message || 'Could not delete expense.'
+			);
+		} finally {
+			setDeletingId(null);
+		}
+	}
+
 	return (
 		<section className="expense-list" aria-labelledby="expense-list-title">
 			<h2 id="expense-list-title">Expenses</h2>
 
+			{deleteError && <p className="expense-delete-error" role="alert">{deleteError}</p>}
 			{isLoading && <p role="status">Loading expenses...</p>}
 			{!isLoading && error && <p role="alert">{error}</p>}
 			{!isLoading && !error && expenses.length === 0 && (
@@ -71,9 +102,24 @@ function ExpenseList({ onEdit, refreshKey }) {
 							<article>
 								<div className="expense-list-heading">
 									<h3>{expense.title}</h3>
-									<button type="button" onClick={() => onEdit(expense)}>
-										Edit
-									</button>
+									<div className="expense-list-actions">
+										<button
+											className="expense-edit-button"
+											type="button"
+											disabled={deletingId === expense._id}
+											onClick={() => onEdit(expense)}
+										>
+											Edit
+										</button>
+										<button
+											className="expense-delete-button"
+											type="button"
+											disabled={deletingId !== null}
+											onClick={() => handleDelete(expense)}
+										>
+											{deletingId === expense._id ? 'Deleting…' : 'Delete'}
+										</button>
+									</div>
 								</div>
 								<dl>
 									<div>

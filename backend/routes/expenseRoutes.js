@@ -63,6 +63,32 @@ router.put('/:id', async (req, res) => {
 	}
 });
 
+router.delete('/:id', async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.isObjectIdOrHexString(id)) {
+		return res.status(400).json({ message: 'Invalid expense ID' });
+	}
+
+	try {
+		const deletedExpense = await Expense.findByIdAndDelete(id);
+		if (!deletedExpense) {
+			return res.status(404).json({ message: 'Expense not found' });
+		}
+
+		return res.status(200).json({
+			message: 'Expense deleted successfully',
+			id: deletedExpense._id
+		});
+	} catch (error) {
+		if (error.name === 'CastError') {
+			return res.status(400).json({ message: 'Invalid expense ID' });
+		}
+
+		console.error('Error deleting expense:', error);
+		return res.status(500).json({ message: 'Failed to delete expense' });
+	}
+});
+
 router.post('/', async (req, res) => {
 	try {
 		const expense = new Expense(req.body);
